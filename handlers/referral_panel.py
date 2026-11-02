@@ -20,7 +20,8 @@ import logging
 import re
 from datetime import datetime, timedelta, timezone
 
-from aiogram.types import CallbackQuery, InlineKeyboardButton as B, InlineKeyboardMarkup as Kb, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup as Kb, Message
+from buttons import Btn as B
 
 import ui
 from services.referral_service import POOL_LABEL, POOLS

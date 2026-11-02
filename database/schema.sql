@@ -365,3 +365,22 @@ CREATE TABLE IF NOT EXISTS referral_claim_items (
 -- An admin switches it to TRUE for one user at a time from the Admin Panel (User Manager).
 -- ======================================================================================
 ALTER TABLE users ADD COLUMN IF NOT EXISTS allow_save_forward BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- Daily auto message (Admin Panel -> Daily Message). One row, id = 1.
+CREATE TABLE IF NOT EXISTS daily_message (
+    id             INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    enabled        BOOLEAN NOT NULL DEFAULT FALSE,
+    send_time      TEXT    NOT NULL DEFAULT '09:00',     -- HH:MM, Asia/Kolkata (IST)
+    body           TEXT    NOT NULL DEFAULT '',
+    photo_file_id  TEXT,
+    btn_label      TEXT,
+    btn_url        TEXT,
+    last_sent_on   DATE,                                 -- IST date of the last automatic send
+    last_run_at    TIMESTAMPTZ,
+    last_total     INTEGER NOT NULL DEFAULT 0,
+    last_sent      INTEGER NOT NULL DEFAULT 0,
+    last_blocked   INTEGER NOT NULL DEFAULT 0,
+    last_failed    INTEGER NOT NULL DEFAULT 0,
+    updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO daily_message (id) VALUES (1) ON CONFLICT DO NOTHING;

@@ -18,7 +18,8 @@ from typing import Awaitable, Callable
 from aiogram import Bot
 from aiogram.exceptions import (TelegramAPIError, TelegramBadRequest, TelegramForbiddenError,
                                 TelegramRetryAfter)
-from aiogram.types import InlineKeyboardButton as B, InlineKeyboardMarkup as Kb
+from aiogram.types import InlineKeyboardMarkup as Kb
+from buttons import Btn as B
 
 import ui
 from database import Database

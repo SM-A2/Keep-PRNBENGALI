@@ -36,10 +36,11 @@ from typing import Any, Awaitable, Callable
 
 from aiogram import BaseMiddleware, Bot
 from aiogram.exceptions import TelegramAPIError, TelegramRetryAfter
-from aiogram.types import (CallbackQuery, InlineKeyboardButton as Btn,
+from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup as Kb, Message, TelegramObject)
 
 import ui
+from buttons import Btn
 from config import Config
 from services.force_sub_service import Channel, ForceSubService
 from services.settings_service import SettingsService

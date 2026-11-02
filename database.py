@@ -37,7 +37,8 @@ def build_dsn(dsn: str) -> tuple[str, object]:
     if parts.scheme != "postgresql":
         raise RuntimeError("DATABASE_URL must look like postgresql://user:password@host:port/dbname")
     host = parts.hostname or ""
-    if not host or host in {"host", "hostname", "your-host", "HOST"} or "<" in dsn or "{" in dsn:
+    has_socket = "host=" in parts.query          # unix-socket style: postgresql:///db?host=/path
+    if (not host and not has_socket) or host in {"host", "hostname", "your-host", "HOST"} or "<" in dsn or "{" in dsn:
         raise RuntimeError(
             "DATABASE_URL still contains a placeholder instead of the real database host. "
             "Copy the host/port/user/password from the Database tab of your Botkeep PostgreSQL server.")

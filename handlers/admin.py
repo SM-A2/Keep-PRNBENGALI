@@ -10,8 +10,9 @@ from aiogram.exceptions import (
     TelegramRetryAfter,
 )
 from aiogram.filters import Command, CommandObject
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 
+from buttons import Btn as InlineKeyboardButton
 from config import Config
 from logging_setup import log_event
 from models.video import ChannelVideo, Video

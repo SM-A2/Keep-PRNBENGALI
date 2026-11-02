@@ -19,7 +19,8 @@ import logging
 import re
 
 from aiogram.exceptions import TelegramAPIError
-from aiogram.types import CallbackQuery, InlineKeyboardButton as B, InlineKeyboardMarkup as Kb, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup as Kb, Message
+from buttons import Btn as B
 
 import ui
 from force_subscribe import bot_channel_status

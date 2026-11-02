@@ -12,6 +12,7 @@ from logging_setup import log_event, setup_logging
 from middlewares import AccessGate, on_error
 from services.bridge_service import BridgeService
 from services.cleanup_service import CleanupService
+from services.daily_service import DailyService
 from services.delivery_service import DeliveryService
 from services.event_service import EventService
 from services.force_sub_service import ForceSubService
@@ -58,8 +59,10 @@ async def main() -> None:
     # Referral links, tracking, anti-fraud and rewards (tables + settings are additive).
     referrals = ReferralService(bot, db, cfg, settings, users, events)
     await referrals.start()
+    daily = DailyService(bot, db, users, cfg)
+    await daily.load()
     panel = admin_panel.Panel(bot, cfg, db, users, videos, scanner, bridge, settings, events,
-                              force_sub=force_sub, referrals=referrals)
+                              force_sub=force_sub, referrals=referrals, daily=daily)
     await users.reset_delivering()
     await scanner.reset_stale()   # a scan that was running when the host restarted is not running any more
 
@@ -93,11 +96,13 @@ async def main() -> None:
     background = asyncio.create_task(scanner.background_loop())
     # Deletes bot-sent videos from users' chats once delete_at passes (restart-safe, DB-backed).
     cleanup_task = asyncio.create_task(cleanup.run())
+    daily_task = asyncio.create_task(daily.background_loop())
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         background.cancel()
         cleanup_task.cancel()
+        daily_task.cancel()
         await scanner.close()
         await bot.session.close()
         await db.close()

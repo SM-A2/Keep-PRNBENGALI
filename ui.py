@@ -1,11 +1,12 @@
 """All user-facing texts and keyboards in one place (HTML parse mode)."""
-from aiogram.types import InlineKeyboardButton as Btn, InlineKeyboardMarkup as Kb
+from aiogram.types import InlineKeyboardMarkup as Kb
+from buttons import Btn
 
 from config import Config
 from services.settings_service import CUSTOM_ACTIONS, MESSAGES, SettingsService, plain_text
 
-LINE = "━━━━━━━━━━━━━━━━━━"
-FOOTER = "🎬 <i>VideoShare • Fast • Unique • Simple</i>"
+LINE = "▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+FOOTER = "✨ <i>VideoShare • Fast • Unique • Simple</i>"
 LABEL = {"new": "New", "old": "Old"}
 ICON = {"new": "🆕", "old": "📦"}
 
@@ -101,17 +102,17 @@ def preview_message(key: str, cfg: Config, value: str | None = None) -> str:
 
 
 def default_welcome(cfg: Config, name: str | None = None) -> str:
-    hello = f"Hey <b>{name}</b>, you're in. 🚀\n" if name else ""
+    hello = f"👋 Hey <b>{name}</b>, welcome back!\n\n" if name else ""
     return (
-        "🔥 <b>WELCOME TO VIDEOSHARE</b> 🔥\n\n"
+        "🎬 <b>VIDEOSHARE</b>\n"
+        "<i>Instant delivery • Fresh drops • Zero repeats</i>\n\n"
+        f"{LINE}\n\n"
         f"{hello}"
-        "⚡ <i>Instant delivery. Fresh drops. Zero repeats.</i>\n\n"
+        "🆕 <b>New</b>  ›  the latest videos\n"
+        "📦 <b>Old</b>  ›  the classic collection\n"
+        f"⏱ Auto-removed after <b>{fmt_duration(cfg.auto_delete_seconds)}</b>\n\n"
         f"{LINE}\n\n"
-        "🆕 <b>New</b> – the latest videos\n"
-        "📦 <b>Old</b> – the classic collection\n"
-        f"⏱️ Auto-removed after {fmt_duration(cfg.auto_delete_seconds)}\n\n"
-        f"{LINE}\n\n"
-        "👇 <b>Tap below and let's go!</b>"
+        "👇 <b>Choose an option below</b>"
     )
 
 
@@ -121,7 +122,7 @@ def welcome_text(cfg: Config, s: SettingsService | None = None, name: str | None
     return _fill(custom, cfg) if custom else default_welcome(cfg, name)
 
 
-DEFAULT_MAIN_MENU = "🏠 <b>Main Menu</b>\n\nWhat would you like to do?"
+DEFAULT_MAIN_MENU = f"🏠 <b>MAIN MENU</b>\n{LINE}\n\nWhat would you like to do?"
 
 
 def main_menu_text() -> str:

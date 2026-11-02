@@ -21,11 +21,13 @@ from typing import Callable
 from aiogram import Bot, F, Router
 from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import Command, CommandObject
-from aiogram.types import CallbackQuery, InlineKeyboardButton as B, InlineKeyboardMarkup as Kb, Message
+from aiogram.types import CallbackQuery, InlineKeyboardMarkup as Kb, Message
+from buttons import Btn as B
 
 import ui
 from config import Config
 from database import Database
+from handlers.daily_panel import DailyPanelMixin
 from handlers.fsub_panel import ForceSubPanelMixin
 from handlers.referral_panel import ReferralPanelMixin
 from logging_setup import log_event
@@ -309,12 +311,13 @@ for _key, (_title, _icon, _slug, *_rest) in MESSAGES.items():     # "More Messag
 
 
 # --------------------------------------------------------------------- the panel
-class Panel(ForceSubPanelMixin, ReferralPanelMixin):
+class Panel(DailyPanelMixin, ForceSubPanelMixin, ReferralPanelMixin):
     def __init__(self, bot: Bot, cfg: Config, db: Database, users: UserService,
                  videos: VideoService, scanner: ScannerService, bridge: BridgeService,
                  settings: SettingsService, events: EventService, force_sub=None,
-                 referrals=None) -> None:
+                 referrals=None, daily=None) -> None:
         self.bot, self.cfg, self.db = bot, cfg, db
+        self.daily = daily               # DailyService (⏰ Daily Message)
         self.force_sub = force_sub       # ForceSubService (📢 Force Subscribe Manager)
         self.referrals = referrals       # ReferralService (📊 Referral Manager)
         self._fsub_health: dict = {}
@@ -392,6 +395,8 @@ class Panel(ForceSubPanelMixin, ReferralPanelMixin):
         parts = path.split(":")
         route, a = (parts[1] if len(parts) > 1 else "home"), parts[2:]
         sub = a[0] if a else ""
+        if route == "daily":
+            return await self.p_daily(a)
         if route == "fsub":
             return await self.p_fsub(a)
         if route == "ref":
@@ -474,6 +479,7 @@ class Panel(ForceSubPanelMixin, ReferralPanelMixin):
             B(text="📋 Logs", callback_data="adm:log"),
         ])
         rows.append([B(text="📢 Force Subscribe Manager", callback_data="adm:fsub")])
+        rows.append([B(text="⏰ Daily Message", callback_data="adm:daily")])
         rows.append([B(text="📊 Referral Manager", callback_data="adm:ref")])
         rows.append([B(text="🏠 Main Menu", callback_data="menu")])
         return text, Kb(inline_keyboard=rows)
@@ -1850,6 +1856,21 @@ async def awaiting_reward_video(message: Message, users: UserService) -> bool:
 @router.message(F.video, awaiting_reward_video)
 async def on_reward_video(message: Message, panel: Panel) -> None:
     await panel.on_input_video(message)
+
+
+async def awaiting_daily_photo(message: Message, users: UserService) -> bool:
+    state, data = await users.get_state(message.from_user.id)
+    return state == "admin_input" and data.get("kind") == "dmphoto"
+
+
+@router.message(Command("skip"), awaiting_input)
+async def cmd_skip(message: Message, panel: Panel) -> None:
+    await panel.on_skip(message)
+
+
+@router.message(F.photo, awaiting_daily_photo)
+async def on_daily_photo(message: Message, panel: Panel) -> None:
+    await panel.on_input_photo(message)
 
 
 @router.message(F.text, ~F.text.startswith("/"), awaiting_input)

@@ -14,10 +14,11 @@ from urllib.parse import quote
 from aiogram import Bot, F, Router
 from aiogram.exceptions import TelegramAPIError
 from aiogram.filters import Command
-from aiogram.types import (CallbackQuery, InlineKeyboardButton as Btn,
+from aiogram.types import (CallbackQuery,
                            InlineKeyboardMarkup as Kb, Message)
 
 import ui
+from buttons import Btn
 from config import Config
 from services.referral_service import ClaimResult, ReferralService, ReferralSummary
 from services.settings_service import SettingsService

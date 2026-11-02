@@ -11,10 +11,11 @@ from typing import Any, Awaitable, Callable
 
 from aiogram import BaseMiddleware, Bot
 from aiogram.exceptions import TelegramAPIError
-from aiogram.types import (CallbackQuery, ErrorEvent, InlineKeyboardButton,
+from aiogram.types import (CallbackQuery, ErrorEvent,
                            InlineKeyboardMarkup, Message, TelegramObject)
 
 import ui
+from buttons import Btn as InlineKeyboardButton
 from config import Config
 from logging_setup import log_event
 from services.settings_service import SettingsService, banned_text, contact_handle, plain_text

@@ -57,6 +57,17 @@ Scan progress (`scan_state` table) is checkpointed only *after* each batch is wr
 
 Run only **one** instance (Telegram long-polling).
 
+## Daily auto message (Admin Panel -> ⏰ Daily Message)
+Sends one message to every active user once a day (India time, IST).
+- **Text** (HTML: `<b>`, `<i>`, `<u>`, `<code>`), optional **photo**, optional **button** (name + `https://` link or `@username`).
+- **🧙 Setup Wizard**: Text -> Photo -> Button. Send `/skip` (or tap ⏭ Skip) to leave a step unchanged.
+- **🟢 Turn ON / 🔴 Turn OFF**, **🕒 Set Time** (presets or custom like `9:30 PM`), **👁 Preview**, **🚀 Send Now**.
+- Settings live in PostgreSQL (`daily_message`), so restarts keep them and a day is never sent twice. If the bot was down at the send time it still sends within 6 hours.
+- Turning ON / changing the time after today's slot has passed schedules the first send for tomorrow.
+
+## Colored buttons
+Buttons are coloured automatically (blue = main actions, green = confirm/more, red = remove/cancel; Back/Menu stay neutral) using Telegram's button `style` (Bot API 9.4+, needs `aiogram>=3.27`). Set `BUTTON_COLORS=off` to disable.
+
 ## Admin commands (IDs in `ADMIN_IDS`)
 | Command | Purpose |
 |---|---|
